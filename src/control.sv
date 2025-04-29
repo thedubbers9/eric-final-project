@@ -23,7 +23,7 @@ module control (
 );
 
     //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
-    parameter [OPCODE_WIDTH - 1:0] HALT   = 4'b0000; // HALT instruction
+    parameter [11:0] HALT   = 4'b0000; // HALT instruction
     /////////////////////////////////////////
 
     always_comb begin

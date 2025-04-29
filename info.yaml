@@ -6,7 +6,6 @@ project:
     - branch_jump.sv
     - chip.sv
     - control.sv
-    - cpu_hier.sv
     - decode.sv
     - ec_pipe_reg.sv
     - execute.sv
