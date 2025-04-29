@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 module register_file (
     input  logic clk,
     input  logic rst,

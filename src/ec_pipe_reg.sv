@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 // Execute-commit pipeline register
 module ec_pipe_reg (
     input  logic clk,

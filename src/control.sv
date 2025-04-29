@@ -22,9 +22,9 @@ module control (
 
 );
 
-    //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
-    parameter [11:0] HALT   = 4'b0000; // HALT instruction
-    /////////////////////////////////////////
+    //////// YOSYS DOESN'T SUPPORT PACKAGES //////////////////
+    parameter [11:0] HALT   = 4'b0000; // HALT instruction //
+    /////////////////////////////////////////////////////////
 
     always_comb begin
         // default values
