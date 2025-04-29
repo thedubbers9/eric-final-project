@@ -12,7 +12,6 @@ project:
     - fe_pipe_reg.sv
     - fetch.sv
     - flags_register.sv
-    - memory.sv
     - register_file.sv
   top_module:  "toplevel_chip"
 
