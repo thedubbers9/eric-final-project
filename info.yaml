@@ -2,8 +2,19 @@
 project:
   source_files:
     - toplevel_chip.v
+    - alu.sv
+    - branch_jump.sv
     - chip.sv
-    - decoder.v
+    - control.sv
+    - cpu_hier.sv
+    - decode.sv
+    - ec_pipe_reg.sv
+    - execute.sv
+    - fe_pipe_reg.sv
+    - fetch.sv
+    - flags_register.sv
+    - memory.sv
+    - register_file.sv
   top_module:  "toplevel_chip"
 
 # As everyone will have access to all designs, try to make it easy for someone new to your design to know what
