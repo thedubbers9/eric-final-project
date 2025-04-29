@@ -1,7 +1,5 @@
 `default_nettype none
 
-import common_def::*;
-
 // Fetch-execute pipeline register
 module fe_pipe_reg (
     input  logic clk,
@@ -15,6 +13,10 @@ module fe_pipe_reg (
     output logic [11:0] instruction_FE_out,
     output logic [9:0] pc_plus_1_FE_out
 );
+
+    //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
+    parameter [INSTRUCTION_WIDTH - 1:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
+    /////////////////////////////////////////
 
     logic [3:0] opcode_FE_in, opcode_FE_out;
     assign opcode_FE_in = instruction_FE_in[11:8];

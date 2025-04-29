@@ -1,9 +1,15 @@
 `default_nettype none
-import common_def::*;
+
+// CHATGPT Usage: I asked how to write a debug log. It said to use $fopen and $fwrite. $fopen needs to be in an initial block.
+
 module cpu_hier (
     input  logic clk,
     input  logic rst
 );
+
+    //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
+    parameter [INSTRUCTION_WIDTH - 1:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
+    /////////////////////////////////////////
 
     logic [9:0] addr_data;
     logic read_write;

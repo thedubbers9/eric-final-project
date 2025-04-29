@@ -1,5 +1,4 @@
 `default_nettype none
-import common_def::*;
 // Control
 module control (
     input  logic [9:0] pc,
@@ -22,6 +21,10 @@ module control (
     output logic [9:0] mem_bus_out // connects to addr_data[9:0]
 
 );
+
+    //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
+    parameter [OPCODE_WIDTH - 1:0] HALT   = 4'b0000; // HALT instruction
+    /////////////////////////////////////////
 
     always_comb begin
         // default values

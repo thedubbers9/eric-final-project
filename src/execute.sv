@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 // Execute pipeline stage
 module execute (
     input  logic [11:0] instruction_FE_out,

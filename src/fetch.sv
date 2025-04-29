@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 // Instruction Fetch Unit
 module fetch (
     input  logic clk,
