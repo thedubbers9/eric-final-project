@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 // Branch and jump logic
 module branch_jump (
     input  logic [9:0] pc_plus_1, alu_result,

@@ -1,6 +1,5 @@
 `default_nettype none
 
-import common_def::*;
 // Flags Register
 module flags_register (
     input  logic clk,

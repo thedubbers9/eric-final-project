@@ -1,5 +1,4 @@
 `default_nettype none
-import common_def::*;
 // Top-level CPU module
 
 module my_chip (

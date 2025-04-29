@@ -1,7 +1,4 @@
 `default_nettype none
-import common_def::*;
-
-// CHATGPT Usage: I asked how to write a debug log. It said to use $fopen and $fwrite. $fopen needs to be in an initial block.
 
 module memory (
     input  logic clk,
