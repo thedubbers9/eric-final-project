@@ -24,7 +24,7 @@ module ec_pipe_reg (
 );
 
     //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
-    parameter [INSTRUCTION_WIDTH - 1:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
+    parameter [11:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
     /////////////////////////////////////////
 
     logic [3:0] opcode_EC_in, opcode_EC_out;

@@ -9,7 +9,7 @@ module alu (
 
     //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
     parameter INSTRUCTION_WIDTH = 12; // Instruction width in bits
-    parameter [INSTRUCTION_WIDTH - 1:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
+    parameter [11:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
 
     parameter OPCODE_WIDTH = 4; // Opcode width in bits
     parameter [11:0] HALT   = 4'b0000; // HALT instruction

@@ -15,7 +15,7 @@ module fe_pipe_reg (
 );
 
     //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
-    parameter [INSTRUCTION_WIDTH - 1:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
+    parameter [11:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
     /////////////////////////////////////////
 
     logic [3:0] opcode_FE_in, opcode_FE_out;
