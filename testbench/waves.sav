@@ -1,0 +1,176 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon Apr 28 18:03:17 2025
+[*]
+[dumpfile] "/home/user/tapeout_proj/verif/dump.vcd"
+[dumpfile_mtime] "Mon Apr 28 17:54:03 2025"
+[dumpfile_size] 256375
+[savefile] "/home/user/tapeout_proj/verif/waves.sav"
+[timestart] 1213520
+[size] 2145 968
+[pos] 158 421
+*-14.000000 1275390 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] cpu_hier.
+[treeopen] cpu_hier.iCPU.
+[treeopen] cpu_hier.iCPU.i_execute.
+[treeopen] cpu_hier.iMEM.
+[sst_width] 39
+[signals_width] 348
+[sst_expanded] 0
+[sst_vpaned_height] 287
+@28
+cpu_hier.iCPU.i_fetch.clk
+cpu_hier.iCPU.i_fetch.rst
+@200
+-MEMORY
+@22
+cpu_hier.iMEM.addr_data[9:0]
+@28
+cpu_hier.iMEM.clk
+cpu_hier.iMEM.dump_mem
+@22
+cpu_hier.iMEM.mem_result[11:0]
+@28
+cpu_hier.iMEM.read_write
+cpu_hier.iMEM.rst
+@22
+cpu_hier.iMEM.write_addr[9:0]
+@28
+cpu_hier.iMEM.write_commit
+@200
+-CONTROL
+@28
+cpu_hier.iCPU.i_control.EC_reg_clear
+cpu_hier.iCPU.i_control.EC_reg_enable
+cpu_hier.iCPU.i_control.FE_reg_clear
+cpu_hier.iCPU.i_control.FE_reg_enable
+cpu_hier.iCPU.i_control.halt
+@22
+cpu_hier.iCPU.i_control.instruction_c_stage[11:0]
+cpu_hier.iCPU.i_control.instruction_ex_stage[11:0]
+cpu_hier.iCPU.i_control.mem_address[9:0]
+cpu_hier.iCPU.i_control.mem_bus_out[9:0]
+@28
+cpu_hier.iCPU.i_control.mem_load
+cpu_hier.iCPU.i_control.mem_read_write
+cpu_hier.iCPU.i_control.mem_store
+cpu_hier.iCPU.i_control.mem_store_commit
+@22
+cpu_hier.iCPU.i_control.mem_write_data[5:0]
+@24
+cpu_hier.iCPU.i_control.pc[9:0]
+@28
+cpu_hier.iCPU.i_control.pc_enable
+cpu_hier.iCPU.i_control.write_commit
+@200
+-FETCH
+@22
+[color] 1
+cpu_hier.iCPU.i_fetch.instruction_from_mem[11:0]
+@28
+cpu_hier.iCPU.i_fetch.halt
+@24
+cpu_hier.iCPU.i_fetch.next_pc[9:0]
+cpu_hier.iCPU.i_fetch.next_pc_internal[9:0]
+@28
+cpu_hier.iCPU.i_fetch.pc_enable
+@24
+cpu_hier.iCPU.i_fetch.pc_out[9:0]
+cpu_hier.iCPU.i_fetch.pc_plus_1_out[9:0]
+@28
+cpu_hier.iCPU.i_fetch.take_branch
+@200
+-EXECUTE
+@25
+cpu_hier.iCPU.i_execute.pc_plus_1_FE_out[9:0]
+@22
+[color] 1
+cpu_hier.iCPU.i_execute.instruction_FE_out[11:0]
+cpu_hier.iCPU.i_execute.ALU_out[11:0]
+cpu_hier.iCPU.i_execute.Rs[9:0]
+cpu_hier.iCPU.i_execute.alu_input_a[11:0]
+cpu_hier.iCPU.i_execute.alu_input_b[11:0]
+@28
+cpu_hier.iCPU.i_execute.branch_op
+cpu_hier.iCPU.i_execute.current_p_flag
+cpu_hier.iCPU.i_execute.current_z_flag
+@22
+cpu_hier.iCPU.i_execute.data_out_rd[11:0]
+cpu_hier.iCPU.i_execute.data_out_rs[11:0]
+cpu_hier.iCPU.i_execute.ex_res_1[11:0]
+cpu_hier.iCPU.i_execute.ex_res_2[11:0]
+cpu_hier.iCPU.i_execute.execute_result[11:0]
+@28
+cpu_hier.iCPU.i_execute.flag_write_enable
+cpu_hier.iCPU.i_execute.jump_op
+cpu_hier.iCPU.i_execute.load_imm
+cpu_hier.iCPU.i_execute.mem_load
+@22
+cpu_hier.iCPU.i_execute.mem_result[11:0]
+@28
+cpu_hier.iCPU.i_execute.mem_store
+cpu_hier.iCPU.i_execute.new_p_flag
+cpu_hier.iCPU.i_execute.new_z_flag
+@24
+cpu_hier.iCPU.i_execute.next_pc[9:0]
+@22
+cpu_hier.iCPU.i_execute.reg_write_addr[3:0]
+cpu_hier.iCPU.i_execute.reg_write_addr_EC_in[3:0]
+cpu_hier.iCPU.i_execute.reg_write_data[11:0]
+@28
+cpu_hier.iCPU.i_execute.reg_write_en
+cpu_hier.iCPU.i_execute.reg_write_en_EC_in
+cpu_hier.iCPU.i_execute.take_branch
+@200
+-DECODE_MOD
+@28
+cpu_hier.iCPU.i_execute.decode_mod.branch_op
+cpu_hier.iCPU.i_execute.decode_mod.flag_write_enable
+cpu_hier.iCPU.i_execute.decode_mod.jump_op
+cpu_hier.iCPU.i_execute.decode_mod.load_imm
+cpu_hier.iCPU.i_execute.decode_mod.mem_load
+cpu_hier.iCPU.i_execute.decode_mod.mem_store
+@22
+cpu_hier.iCPU.i_execute.decode_mod.opcode[3:0]
+@28
+cpu_hier.iCPU.i_execute.decode_mod.reg_write_enable
+@200
+-COMMIT
+@24
+cpu_hier.iCPU.pc_plus_1_EC_out[9:0]
+@22
+[color] 1
+cpu_hier.iCPU.i_ec_pipe_reg.instruction_EC_out[11:0]
+@28
+cpu_hier.iCPU.i_ec_pipe_reg.write_enable_EC
+cpu_hier.iCPU.i_ec_pipe_reg.clear_EC
+@22
+cpu_hier.iCPU.i_ec_pipe_reg.execute_result_EC_out[11:0]
+@28
+cpu_hier.iCPU.i_ec_pipe_reg.mem_store_EC_out
+@22
+cpu_hier.iCPU.i_ec_pipe_reg.opcode_EC_out[3:0]
+cpu_hier.iCPU.i_ec_pipe_reg.reg_write_addr_EC_out[3:0]
+@28
+cpu_hier.iCPU.i_ec_pipe_reg.reg_write_en_EC_out
+@200
+-REGISTERS
+@22
+cpu_hier.iCPU.i_execute.i_reg_file.registers[0][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[1][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[2][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[3][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[4][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[5][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[6][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[7][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[8][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[9][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[10][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[11][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[12][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[13][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[14][11:0]
+cpu_hier.iCPU.i_execute.i_reg_file.registers[15][11:0]
+[pattern_trace] 1
+[pattern_trace] 0

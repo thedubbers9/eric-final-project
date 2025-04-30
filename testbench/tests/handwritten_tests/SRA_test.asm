@@ -1,0 +1,9 @@
+LI R3, 3 # 000000000011
+LI R1, 10 
+SL R3, R1 #11 as two MSBs
+LI R6, 3
+SRA R3, R6
+LI R9, 14
+STOREL R3, R9 # STOREL Rd, Rs    MEM[REG[Rs]] <- Rd
+STOREU R3, R9 # STOREU Rd, Rs    MEM[REG[Rs]] <- Rd
+HALT
