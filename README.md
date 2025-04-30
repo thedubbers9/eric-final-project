@@ -1,60 +1,42 @@
 # 18-224/624 S25 Tapeout Template
 
-
-1. Add your verilog source files to `source_files` in `info.yaml`. The top level of your chip should remain in `chip.sv` and be named `my_chip`
-
-  
-  
-
-2. Optionally add other details about your project to `info.yaml` as well (this is only for GitHub - your final project submission will involve submitting these in a different format)
-
-3. Do NOT edit `toplevel_chip.v`  `config.tcl` or `pin_order.cfg`
-
- # Final Project Submission Details 
+# Final Project Submission Details 
   
 1. Your design must synthesize at 30MHz but you can run it at any arbitrarily-slow frequency (including single-stepping the clock) on the manufactured chip. If your design must run at an exact frequency, it is safest to choose a lower frequency (i.e. 5MHz)
-
-  
+This design successfully synthesizes at 32MHz.
 
 2. For your final project, we will ask you to submit some sort of testbench to verify your design. Include all relevant testing files inside the `testbench` repository
-
+Done. 
   
-  
-
 3. For your final project, we will ask you to submit documentation on how to run/test your design, as well as include your project proposal and progress reports. Include all these files inside the `docs` repository
-
+To test the design, go to src/ and then run bash test_all.sh.
   
-  
-
 4. Optionally, if you use any images in your documentation (diagrams, waveforms, etc) please include them in a separate `img` repository
-
+N/A
   
 
 5. Feel free to edit this file and include some basic information about your project (short description, inputs and outputs, diagrams, how to run, etc). An outline is provided below
 
-# Final Project Example Template
+# Final Project
 
-This is an example outline you can modify and use in your final project submission. You are not required to use this exact template
+## RISC-E
 
-## Project Name
-
-A short description of what your project does and how it works. Feel free to include images
+This is a very basic microprocessor with a similar level of complexity as the intel 4004. 
 
 ## IO
 
-An IO table listing all of your inputs and outputs and their function, like the one below:
+All 12 inputs and outputs from the chip will be connected the memory (which will be on the FPGA). 
 
-| Input/Output	| Description|																
-|-------------|--------------------------------------------------|
-| io_in[0]    | choose vga mode, when 0 640x480. When 1, 800x480 |
-| io_in[11:1] | unused                                           |
-| io_out[2:0] | Red channel                                      |
-| io_out[5:3] | Green channel                                    |
-| io_out[8:6] | Blue channel                                     |
-| io_out[9]   | HS, horizontal sync                              |
-| io_out[10]  | VS, vertical sync                                |
-| io_out[11]  | liveness check.  Toggles every couple of seconds |
+| Name          | Dir   | Width | Purpose for Read      | Purpose for Write          |
+|---------------|-------|-------|-----------------------|----------------------------|
+| addr_data     | in    | 10    | Addr                  | Cycle1: addr, C2: data     |
+| read_write    | in    | 1     | Read when == 1        | Write when == 0            |
+| write_commit  | in    | 1     | Must be zero          | Signifies 2nd cyc of write |
+| mem_result    | out   | 12    | Read Result           | X                          |
+
+*Direction is from memory’s perspective
+If read_write and write_commit are both one, this indicates a HALT condition (HALT instruction reached). 
 
 ## How to Test
 
-A short description of how to test the design post-tapeout
+Connect the chip to the host FPGA. 
