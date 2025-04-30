@@ -13,26 +13,24 @@ module decode (
     
 );
     //////// YOSYS DOESN'T SUPPORT PACKAGES ////////
-    parameter INSTRUCTION_WIDTH = 12; // Instruction width in bits
     parameter [11:0] NOP = 12'b101100010001; // B11 // NOP instruction B11
 
-    parameter OPCODE_WIDTH = 4; // Opcode width in bits
-    parameter [11:0] HALT   = 4'b0000; // HALT instruction
-    parameter [11:0] LOAD   = 4'b0001; // LOAD instruction
-    parameter [11:0] STOREL = 4'b0110; // STORE lower instruction
-    parameter [11:0] STOREU = 4'b0111; // STORE upper instruction
-    parameter [11:0] ADD    = 4'b1000; // ADD instruction
-    parameter [11:0] SUB    = 4'b1001; // SUB instruction
-    parameter [11:0] AND    = 4'b1010; // AND instruction
-    parameter [11:0] OR     = 4'b1011; // OR instruction
-    parameter [11:0] XOR    = 4'b1100; // XOR instruction
-    parameter [11:0] SL     = 4'b1101; // Shift left instruction
-    parameter [11:0] SRL    = 4'b1110; // Shift right logical instruction
-    parameter [11:0] SRA    = 4'b1111; // Shift right arithmetic instruction
-    parameter [11:0] NOT    = 4'b0101; // NOT instruction
-    parameter [11:0] LI     = 4'b0100; // Load immediate instruction
-    parameter [11:0] JUMP   = 4'b0010; // JUMP instruction
-    parameter [11:0] BRANCH = 4'b0011; // BRANCH instruction (z or p flag)
+    parameter [3:0] HALT   = 4'b0000; // HALT instruction
+    parameter [3:0] LOAD   = 4'b0001; // LOAD instruction
+    parameter [3:0] STOREL = 4'b0110; // STORE lower instruction
+    parameter [3:0] STOREU = 4'b0111; // STORE upper instruction
+    parameter [3:0] ADD    = 4'b1000; // ADD instruction
+    parameter [3:0] SUB    = 4'b1001; // SUB instruction
+    parameter [3:0] AND    = 4'b1010; // AND instruction
+    parameter [3:0] OR     = 4'b1011; // OR instruction
+    parameter [3:0] XOR    = 4'b1100; // XOR instruction
+    parameter [3:0] SL     = 4'b1101; // Shift left instruction
+    parameter [3:0] SRL    = 4'b1110; // Shift right logical instruction
+    parameter [3:0] SRA    = 4'b1111; // Shift right arithmetic instruction
+    parameter [3:0] NOT    = 4'b0101; // NOT instruction
+    parameter [3:0] LI     = 4'b0100; // Load immediate instruction
+    parameter [3:0] JUMP   = 4'b0010; // JUMP instruction
+    parameter [3:0] BRANCH = 4'b0011; // BRANCH instruction (z or p flag)
 
     /////////////////////////////////////////
     
