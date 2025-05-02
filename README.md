@@ -9,7 +9,7 @@ This design successfully synthesizes at 32MHz.
 Done. 
   
 3. For your final project, we will ask you to submit documentation on how to run/test your design, as well as include your project proposal and progress reports. Include all these files inside the `docs` repository
-To test the design, go to src/ and then run bash test_all.sh.
+To test the design, go to src/ and then run bash test_all_in_simulation.sh.
   
 4. Optionally, if you use any images in your documentation (diagrams, waveforms, etc) please include them in a separate `img` repository
 N/A
