@@ -19,17 +19,20 @@ module cpu_on_fpga (
     assign clk = clk_ext;
     assign ext_rst = ~btn[0]; // Active high reset. Button is active low.
 
+    assign cpu_rst = ext_rst | dump_mem_to_uart | load_mem_from_uart; // we want pc to stay at zero while these operations are happening.
+    assign mem_rst = ext_rst;
+
     logic [9:0] addr_data_from_cpu;
     logic read_write_from_cpu;
     logic write_commit_from_cpu;
     logic halt;
 
-    // my_chip iCPU (
-    //     .io_in(mem_result), // Inputs to your chip
-    //     .io_out({read_write_from_cpu, write_commit_from_cpu, addr_data_from_cpu}), // Outputs from your chip
-    //     .clock(clk),
-    //     .reset(rst) // Important: Reset is ACTIVE-HIGH
-    // );
+    my_chip iCPU (
+        .io_in(mem_result), // Inputs to your chip
+        .io_out({read_write_from_cpu, write_commit_from_cpu, addr_data_from_cpu}), // Outputs from your chip
+        .clock(clk),
+        .reset(cpu_rst) // Important: Reset is ACTIVE-HIGH
+    );
 
     assign halt = read_write_from_cpu & write_commit_from_cpu;
 
@@ -56,7 +59,7 @@ module cpu_on_fpga (
     logic [11:0] mem_result;
     memory_fpga iMEM(
         .clk (clk),
-        .rst (cpu_rst),
+        .rst (mem_rst),
         .read_write (read_write_to_mem),
         .write_commit(write_commit_to_mem),
         .addr_data (addr_data_to_mem),
