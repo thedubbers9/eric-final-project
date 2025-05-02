@@ -22,7 +22,7 @@ project:
 #
 # This info will be automatically collected and used to make a datasheet for the chip.
 documentation: 
-  author:       "PLACEHOLDER"      # Your name
+  author:       "Eric Dubberstein"      # Your name
   discord:      ""      # Your discord handle
   title:        "PLACEHOLDER"      # Project title
   description:  "PLACEHOLDER"      # Short description of what your project does

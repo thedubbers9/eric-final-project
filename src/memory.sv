@@ -1,4 +1,7 @@
-`default_nettype none
+`default_nettype nones
+
+
+//`define LOAD_FROM_FILE 1  // define to load memory from a file (SIMULATION ONLY)
 
 module memory (
     input  logic clk,
@@ -22,7 +25,6 @@ module memory (
             for (int i = 0; i < 1024; i++) begin
                 memory_array[i] = '0;
             end
-            $readmemh("./tests/add_test_23.hex", memory_array);
         end else if (write_commit & ~read_write) begin
             if (addr_data[6]) begin
                 memory_array[write_addr][11:6] <= addr_data[5:0];
@@ -34,7 +36,7 @@ module memory (
         end
     end
 
-    // Read operaton
+    // Read operation
     always_comb begin
         if (read_write) begin
             mem_result = memory_array[addr_data];
@@ -43,15 +45,20 @@ module memory (
         end
     end
 
-    // dump mem to file 
-    always_ff @(posedge clk) begin
-        if (dump_mem) begin
-            $writememh("add_test_out33.hex", memory_array);
-        end
+    // Conditional block for loading memory from a file
+`ifdef LOAD_FROM_FILE
+    initial begin
+        $readmemh("./test_vals.hex", memory_array); // dummy file, will be changed on script run
     end
 
+    // Dump memory to file
+    always_ff @(posedge clk) begin
+        if (dump_mem) begin
+            $writememh("./test_vals.hex", memory_array);
+        end
+    end
+`endif
+
 endmodule
-
-
 
 `default_nettype wire
