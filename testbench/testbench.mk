@@ -1,5 +1,5 @@
 TOPLEVEL_LANG = verilog
-VERILOG_SOURCES = $(shell find $(shell pwd)/../src/ -maxdepth 1 -name "*.sv")
+VERILOG_SOURCES = $(shell find $(shell pwd)/../src/ -maxdepth 1 -name "*.sv" ! -name "uart.sv" ! -name "cpu_on_fpga.sv" ! -name "memory_fpga.sv")
 TOPLEVEL = cpu_hier
 MODULE = testbench
 SIM = verilator

@@ -87,7 +87,7 @@ def main():
     elif args.emulation:
         ## run the testbench on the FPGA board
         print("Running testbench on FPGA board")
-        run_testbench_fpga(args.input_asm)
+        run_testbench_fpga(args.input_asm, args.debug)
 
 
     else:
@@ -172,12 +172,9 @@ def run_testbench(input_asm, debug):
     return not (mismatch_mem or mismatch_trace)
     
 
-if __name__ == "__main__":
-    main()
 
 
-
-def run_testbench_fpga(input_asm):
+def run_testbench_fpga(input_asm, debug):
 
     input_dir = os.path.dirname(input_asm)
 
@@ -198,18 +195,16 @@ def run_testbench_fpga(input_asm):
     print(f"Running golden model on {assembled_file}")
     os.system(f"python3 golden_model.py {assembled_file}{' -d' if debug else ''}")
     golden_output_hex = assembled_file.replace('.hex', '_golden_run_out.hex')
-    golden_trace_file = assembled_file.replace('.hex', '_golden_run_trace.trace')
     print(f"Golden model run complete! Output: {golden_output_hex}")
 
     ####### run the testbench
 
     # create the output file name
-    testbench_output_hex = assembled_file.replace('.hex', '_testbench_run_out.hex')
-    testbench_trace_file = assembled_file.replace('.hex', '_testbench_run_trace.trace')
+    testbench_output_hex = assembled_file.replace('.hex', '_fpga_run_out.hex')
 
-    print(f"Running testbench on {assembled_file}")
-    os.system(f"bash run_test.sh {assembled_file} {testbench_output_hex} {testbench_trace_file}")
-    print(f"Testbench run complete! Output: {testbench_output_hex}")
+    print(f"Running fpga testbench on {assembled_file}")
+    os.system(f"python3 run_fpga_test.py -i {assembled_file} -o {testbench_output_hex}")
+    print(f"FPGA testbench run complete! Output: {testbench_output_hex}")
 
 
     ####### compare the two final MEM states
@@ -225,31 +220,10 @@ def run_testbench_fpga(input_asm):
 
     if not mismatch_mem:
         print("All lines for final memory state match!")
-
-    ######## compare the two trace files
-    golden_trace_lines = read_trace_file(golden_trace_file)
-    testbench_trace_lines = read_trace_file(testbench_trace_file)
-
-    mismatch_trace = False
-    num_lines_testbench = len(testbench_trace_lines)
-    for i in range(len(golden_trace_lines)):
-        if i >= num_lines_testbench:
-            print("Testbench trace file is shorter than golden trace file.")
-            mismatch_trace = True
-            break
-        if golden_trace_lines[i] != testbench_trace_lines[i]:
-            print(f"TRACE Mismatch at line {i}: Golden Model: {golden_trace_lines[i]} Testbench: {testbench_trace_lines[i]}")
-            mismatch_trace = True
-            break
-
-    if testbench_trace_lines != golden_trace_lines:
-        print(f"The testbench trace file has {len(testbench_trace_lines)} lines, while the golden trace file has {len(golden_trace_lines)} lines.")
-        mismatch_trace = True
-
-    if not mismatch_trace:
-        print("All lines for trace match!")
-
-    if not mismatch_mem and not mismatch_trace:
         print("YAHOO! TEST PASSED!")
 
-    return not (mismatch_mem or mismatch_trace)
+    return not mismatch_mem
+
+
+if __name__ == "__main__":
+    main()

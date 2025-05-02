@@ -1,3 +1,4 @@
+import argparse
 import serial.tools.list_ports
 import serial, random
 from tqdm import tqdm
@@ -6,6 +7,22 @@ import time
 
 # if None, tries to auto-find serial port
 SERIAL_PORT = None
+
+
+parser = argparse.ArgumentParser(description="loads a .hex file onto the FPGA board's memory, runs the cpu, and reads back the memory.")
+parser.add_argument("-i", "--input_hex", default=None, help="Path to .hex machine code input file")
+parser.add_argument("-o", "--output_hex", default=None, help="Path to .hex file to write the output memory state to")
+
+args = parser.parse_args()
+
+if args.input_hex is None:
+    print("ERROR: No input hex file provided")
+    sys.exit(1)
+
+if args.output_hex is None:
+    print("ERROR: No output hex file provided")
+    sys.exit(1)
+
 
 ports = serial.tools.list_ports.comports()
 port = [x for x in ports if "ULX3S" in str(x.description)+str(x.product)]
@@ -99,7 +116,7 @@ def get_data_from_serial(b):
 instructions = []
 addr = 0
 ## open up a file to read lines from 
-with open("./add_test.hex", "r") as f:
+with open(args.input_hex, "r") as f:
     for line in f.readlines():
         line = line.strip()
         if len(line) == 0:
@@ -151,31 +168,9 @@ while not done and time.time() - start_time < 30:
 
 
 ## write the data to a file
-with open("read_test.hex", "w") as f:
+with open(args.output_hex, "w") as f:
     for addr in range(1024):
         if addr in result_mem:
             f.write(f"{result_mem[addr]:03X}\n")
         else:
             f.write("000\n")
-
-        
-
-        
-
-
-    # Write data periodically
-    # if time.time() - last_write_time > write_interval and count < 3:
-    #     # Example data to send: [START_BYTE, 0x01, 0x02, 0x03, 0x04, STOP_BYTE]
-    #     example_data = "010101010101"
-    #     if count %2 == 1:
-    #         example_data = "101010101010"
-    #         #write_data([START_BYTE, 0x32, 0x23, 0x32, 0x23, STOP_BYTE])
-    #         #write_data([START_BYTE, 0x33, 0x22, 0x33, 0x22, STOP_BYTE])
-    #     count+=1
-
-    #     if count == 3:
-    #         write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
-    #     else:
-    #         write_mem_addr(1000, example_data)
-        
-    #     last_write_time = time.time()

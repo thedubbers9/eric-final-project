@@ -66,12 +66,6 @@ module cpu_on_fpga (
         .mem_result (mem_result)
     );
 
-    logic [7:0] count;
-    SlowCounter ctr (
-        .clk(clk_ext),
-        .ctr(count)
-    );
-
     logic uart_tx_done;
     logic send_data_over_UART; // have UART send the data to the host
 
@@ -319,25 +313,6 @@ module cpu_on_fpga (
     end 
 
     assign led = {data_from_uart[2:0], mem_write_state, mem_read_state};
-
-    //assign led = {7{btn[0]}}; // blink the led when the button is pressed
-
-endmodule
-
-module SlowCounter (
-    input logic clk,
-    output logic [7:0] ctr
-);
-
-    // Create a slow-ish counter
-    logic [24:0] tmp;
-    always_ff @(posedge clk) begin
-        tmp <= tmp + 1;
-        if (tmp >= 25000000) begin
-            ctr <= ctr + 1;
-            tmp <= 0;
-        end
-    end
 
 endmodule
 
