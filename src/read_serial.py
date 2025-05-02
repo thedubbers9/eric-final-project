@@ -37,8 +37,8 @@ ser.read(999)
 
 print("Ready...")
 
-START_BYTE = 0x55
-STOP_BYTE = 0xAA
+START_BYTE = 0xF5
+STOP_BYTE = 0xFA
 
 last = 0
 last_time = 0
@@ -57,21 +57,24 @@ last_write_time = time.time()
 
 count = 0
 
-# def write_mem_addr(addr, word):
-#     ''' addr: int address to write to (0-1023)
-#     word: 12-bit word as a string of binary characters. E.g. "000000000000" (12 bits) '''
+def write_mem_addr(addr, word):
+    ''' addr: int address to write to (0-1023)
+    word: 12-bit word as a string of binary characters. E.g. "000000000000" (12 bits) '''
 
-#     byte0 = (addr >> 8) & 0x3 # upper 2 bits of address
-#     byte1 = addr & 0xFF # lower 8 bits of address
-#     byte2 = int(word[0:8], 2)
-#     byte3 = int(word[8:12], 2) 
+    ## we can't have a 1 in the MSB of any of the bytes to avoid getting confused with the start/stop bytes
 
-#     print(f"Writing to address {addr}: {word}")
-#     print(f"Bytes: {byte0:02X} {byte1:02X} {byte2:02X} {byte3:02X}")
 
-#     data = [START_BYTE, byte0, byte1, byte2, byte3, STOP_BYTE]
+    byte0 = (addr >> 5) & 0x1F # upper 5 bits of address.
+    byte1 = addr & 0x1F # lower 5 bits of address
+    byte2 = int(word[:6], 2) # upper 6 bits of word
+    byte3 = int(word[6:], 2) # lower 6 bits of word
 
-#     write_data(data)
+    print(f"Writing to address {addr}: {word}")
+    print(f"Bytes: {byte0:08b} {byte1:08b} {byte2:08b} {byte3:08b}")
+
+    data = [START_BYTE, byte0, byte1, byte2, byte3, STOP_BYTE]
+
+    write_data(data)
 
 
 
@@ -101,12 +104,12 @@ while True:
         example_data = "010101010101"
         if count == 1:
             example_data = "101010101010"
-            write_data([START_BYTE, 0x32, 0x23, 0x32, 0x23, STOP_BYTE])
+            #write_data([START_BYTE, 0x32, 0x23, 0x32, 0x23, STOP_BYTE])
             count = 0
         else:
             count+=1
-            write_data([START_BYTE, 0x33, 0x22, 0x33, 0x22, STOP_BYTE])
+            #write_data([START_BYTE, 0x33, 0x22, 0x33, 0x22, STOP_BYTE])
 
-        # write_mem_addr(500, example_data)
+        write_mem_addr(500, example_data)
         
         last_write_time = time.time()

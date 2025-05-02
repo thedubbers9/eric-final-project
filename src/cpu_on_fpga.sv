@@ -65,7 +65,7 @@ module cpu_on_fpga (
     ) iface (
         .clk(clk_ext),
         .data({8'h00, count, 8'h00, count}),
-        .send(count%4 == 0),
+        .send(count == 8'hFF), // Send every 255 counts
         .ftdi_rxd, .ftdi_txd()
     );
 
@@ -84,13 +84,17 @@ module cpu_on_fpga (
         .i_clk(clk_ext),
     ); 
 
-    localparam [7:0] START_BYTE = 8'h55;
-    localparam [7:0] STOP_BYTE = 8'hAA;
+    localparam [7:0] START_BYTE = 8'hF5;
+    localparam [7:0] STOP_BYTE = 8'hFA;
+
+    // if we see this byte, we output the memory contents to the UART
+    localparam [7:0] READ_OUT_MEM_BYTE = 8'hF6;
 
     // Flop the rx data output
     logic [7:0] byte0, byte1, byte2, byte3;
     logic [1:0] byte_num;
     logic data_valid;
+    logic read_out_mem;
 
     always @ (posedge clk_ext) begin
         if (rx_valid) begin
@@ -100,6 +104,8 @@ module cpu_on_fpga (
             end else if (rx_data == STOP_BYTE) begin
                 byte_num <= 0;
                 data_valid <= 1;
+            end else if (rx_data == READ_OUT_MEM_BYTE) begin
+                read_out_mem <= 1;
             end else begin
                 case (byte_num)
                     0: byte0 <= rx_data;
@@ -108,55 +114,22 @@ module cpu_on_fpga (
                     3: byte3 <= rx_data;
                 endcase
                 byte_num <= byte_num + 1;
+                read_out_mem <= 0;
             end
         end
     end
 
 
-    // Display the error counter on the LEDs
-    assign led = byte1;
+    logic [9:0] address_from_uart;
+    logic [11:0] data_from_uart;
 
-    // // Flop the rx data output
-    // logic [7:0] byte0, byte1, byte2, byte3;
-    // logic [1:0] byte_num;
-    // logic data_valid;
+    assign address_from_uart = {byte0[4:0], byte1[4:0]};
+    assign data_from_uart = {byte2[5:0], byte3[5:0]};
 
-    // always @ (posedge clk_ext or posedge ext_rst) begin
-    //     if (ext_rst) begin
-    //         byte_num <= 0;
-    //         byte0 <= 0;
-    //         byte1 <= 0;
-    //         byte2 <= 0;
-    //         byte3 <= 0;
-    //         data_valid <= 0;
-    //     end 
-    //     else if (rx_valid) begin
-    //         if (rx_data == START_BYTE) begin
-    //             byte_num <= 0;
-    //             data_valid <= 0;
-    //         end else if (rx_data == STOP_BYTE) begin
-    //             byte_num <= 0;
-    //             data_valid <= 1;
-    //         end else begin
-    //             case (byte_num)
-    //                 0: byte0 <= rx_data;
-    //                 1: byte1 <= rx_data;
-    //                 2: byte2 <= rx_data;
-    //                 3: byte3 <= rx_data;
-    //             endcase
-    //             byte_num <= byte_num + 1;
-    //         end
-    //     end
-    // end
+    assign led = data_from_uart[7:0];
 
-    // logic [9:0] address_from_uart;
-    // logic [11:0] data_from_uart;
+    // state machine for reading from memory
 
-    // assign address_from_uart = {byte0[1:0], byte1};
-    // assign data_from_uart = {byte2, byte3[3:0]};
-
-    // //assign led = data_from_uart[7:0];
-    // assign led = 8'hFF; // turn on all LEDs
 
     // // state machine for writing to memory
     // logic [5:0] mem_write_state;
