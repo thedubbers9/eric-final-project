@@ -179,105 +179,82 @@ module cpu_on_fpga (
         endcase
     end
 
-    assign led = {data_from_uart[4:0], mem_read_state[2:0]};
+    
 
 
 
 
-    // // state machine for writing to memory
-    // logic [5:0] mem_write_state;
-    // localparam [5:0] START = 6'b000001; // start here on reset
-    // localparam [5:0] CLEAR_MEM = 6'b000010; // clear memory
-    // localparam [5:0] SEND_ADDR_L = 6'b000100;
-    // localparam [5:0] SEND_DATA_L = 6'b001000;
-    // localparam [5:0] SEND_ADDR_U = 6'b010000;
-    // localparam [5:0] SEND_DATA_U = 6'b100000;
-    // localparam [5:0] WAIT = 6'b000000; // wait for the next data word to be ready
+    // state machine for writing to memory
+    logic [2:0] mem_write_state;
+    localparam [2:0] WAIT = 3'b000; // wait for the next data word to be ready from UART.
+    localparam [2:0] SEND_ADDR_L = 3'b001;
+    localparam [2:0] SEND_DATA_L = 3'b010;
+    localparam [2:0] SEND_ADDR_U = 3'b011;
+    localparam [2:0] SEND_DATA_U = 3'b100;
+    
 
-    // // Next state logic 
-    // always_ff @(posedge clk_ext) begin
-    //     if (ext_rst) begin
-    //         mem_write_state <= START;
-    //     end else begin
-    //         case (mem_write_state)
-    //             START: begin
-    //                 mem_write_state <= CLEAR_MEM;
-    //             end
-    //             CLEAR_MEM: begin
-    //                 mem_write_state <= WAIT;
-    //             end
-    //             SEND_ADDR_L: begin
-    //                 addr_data <= {byte0, byte1};
-    //                 mem_write_state <= SEND_DATA_L;
-    //             end
-    //             SEND_DATA_L: begin
-    //                 addr_data <= {byte2, byte3};
-    //                 mem_write_state <= SEND_ADDR_U;
-    //             end
-    //             SEND_ADDR_U: begin
-    //                 addr_data <= {byte0, byte1};
-    //                 mem_write_state <= SEND_DATA_U;
-    //             end
-    //             SEND_DATA_U: begin
-    //                 addr_data <= {byte2, byte3};
-    //                 mem_write_state <= WAIT;
-    //             end
-    //             WAIT: begin
-    //                 if (data_valid) begin
-    //                     mem_write_state <= SEND_ADDR_L;
-    //                 end 
-    //             end
-    //         endcase
-    //     end
-    // end
+    // Next state logic 
+    always_ff @(posedge clk_ext) begin
+        case (mem_write_state)
+            SEND_ADDR_L: begin
+                mem_write_state <= SEND_DATA_L;
+            end
+            SEND_DATA_L: begin
+                mem_write_state <= SEND_ADDR_U;
+            end
+            SEND_ADDR_U: begin
+                mem_write_state <= SEND_DATA_U;
+            end
+            SEND_DATA_U: begin
+                mem_write_state <= WAIT;
+            end
+            WAIT: begin
+                if (data_valid) begin
+                    mem_write_state <= SEND_ADDR_L;
+                end 
+            end
+        endcase
+    end
 
-    // // Output logic 
-    // always_comb begin
-    //     // defaults: just from the CPU. 
-    //     addr_data_to_mem = addr_data;
-    //     read_write_to_mem = read_write;
-    //     write_commit_to_mem = write_commit;
+    // Output logic 
+    always_comb begin
+        // defaults: just from the CPU. 
+        addr_data_to_mem = addr_data;
+        read_write_to_mem = read_write;
+        write_commit_to_mem = write_commit;
         
-    //     case (mem_write_state)
-    //         START: begin
-    //             addr_data_to_mem = addr_data;
-    //             read_write_to_mem = read_write;
-    //             write_commit_to_mem = write_commit;
-    //         end
-    //         CLEAR_MEM: begin
-    //             addr_data_to_mem = 0;
-    //             read_write_to_mem = 1; // Write
-    //             write_commit_to_mem = 1; // Commit
-    //         end
-    //         SEND_ADDR_L: begin
-    //             addr_data_to_mem = {byte0, byte1};
-    //             read_write_to_mem = 1; // Write
-    //             write_commit_to_mem = 1; // Commit
-    //         end
-    //         SEND_DATA_L: begin
-    //             addr_data_to_mem = {byte2, byte3};
-    //             read_write_to_mem = 1; // Write
-    //             write_commit_to_mem = 1; // Commit
-    //         end
-    //         SEND_ADDR_U: begin
-    //             addr_data_to_mem = {byte0, byte1};
-    //             read_write_to_mem = 1; // Write
-    //             write_commit_to_mem = 1; // Commit
-    //         end
-    //         SEND_DATA_U: begin
-    //             addr_data_to_mem = {byte2, byte3};
-    //             read_write_to_mem = 1; // Write
-    //             write_commit_to_mem = 1; // Commit
-    //         end 
-    //         WAIT: begin 
-    //             addr_data_to_mem = addr_data;
-    //             read_write_to_mem = read_write;
-    //             write_commit_to_mem = write_commit;
-    //         end
+        case (mem_write_state)
+            SEND_ADDR_L: begin
+                addr_data_to_mem = address_from_uart;
+                read_write_to_mem = 0; // Write
+                write_commit_to_mem = 0; // Commit
+            end
+            SEND_DATA_L: begin
+                addr_data_to_mem = {4'b1, data_from_uart[5:0]};
+                read_write_to_mem = 0; // Write
+                write_commit_to_mem = 1; // Commit
+            end
+            SEND_ADDR_U: begin
+                addr_data_to_mem = address_from_uart;
+                read_write_to_mem = 0; // Write
+                write_commit_to_mem = 0; // Commit
+            end
+            SEND_DATA_U: begin
+                addr_data_to_mem = {4'b0, data_from_uart[11:6]};
+                read_write_to_mem = 0; // Write
+                write_commit_to_mem = 1; // Commit
+            end 
+            WAIT: begin 
+                addr_data_to_mem = addr_data;
+                read_write_to_mem = read_write;
+                write_commit_to_mem = write_commit;
+            end
 
-    //     endcase
+        endcase
 
-    // end 
+    end 
+
+    assign led = {data_from_uart[4:0], mem_read_state[2:0]};
 
 endmodule
 
