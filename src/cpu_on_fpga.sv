@@ -39,14 +39,13 @@ module cpu_on_fpga (
 
 
     logic [11:0] mem_result;
-    memory iMEM(
+    memory_fpga iMEM(
         .clk (clk),
         .rst (cpu_rst),
         .read_write (read_write_to_mem),
         .write_commit(write_commit_to_mem),
         .addr_data (addr_data_to_mem),
-        .mem_result (mem_result), 
-        .dump_mem (halt) 
+        .mem_result (mem_result)
     );
 
 
@@ -58,15 +57,18 @@ module cpu_on_fpga (
         .ctr(count)
     );
 
+    logic uart_tx_done;
+
     // UART TX
     uart_iface #(
         .CLK_FREQ(25000000),
         .BAUD(115200)
     ) iface (
         .clk(clk_ext),
-        .data({8'h00, count, 8'h00, count}),
-        .send(count == 8'hFF), // Send every 255 counts
-        .ftdi_rxd, .ftdi_txd()
+        .data({3'b0, address_to_read[9:5], 3'b0, address_to_read[4:0], 2'b0, mem_result[11:6], 2'b0, mem_result[5:0]}), // 8 bits of data to send}),
+        .send(send_data), 
+        .ftdi_rxd, .ftdi_txd(),
+        .uart_tx_done(uart_tx_done) 
     );
 
     // UART RX
@@ -126,9 +128,60 @@ module cpu_on_fpga (
     assign address_from_uart = {byte0[4:0], byte1[4:0]};
     assign data_from_uart = {byte2[5:0], byte3[5:0]};
 
-    assign led = data_from_uart[7:0];
-
     // state machine for reading from memory
+    logic [5:0] mem_read_state;
+    localparam [5:0] READ_START = 6'b000000; // start here on reset
+    localparam [5:0] READ_WAIT = 6'b000010; // wait for the next data word to finish being sent
+    localparam [5:0] READ = 6'b000100; // read from memory
+
+    logic [9:0] address_to_read; 
+
+    // outputs of SM
+    logic send_data; // have UART send the data to the host
+
+    // next state logic
+    always_ff @(posedge clk_ext) begin
+        case (mem_read_state)
+            READ_START: begin
+                if (read_out_mem) begin
+                    mem_read_state <= READ;
+                    address_to_read <= '0;
+                end
+            end
+            READ_WAIT: begin
+                if (uart_tx_done) begin
+                    mem_read_state <= READ;
+                end 
+            end
+            READ: begin
+                mem_read_state <= READ_WAIT;
+                if (address_to_read == 10'h3FF) begin
+                    mem_read_state <= READ_START;
+                end
+                address_to_read <= address_to_read + 1;
+            end
+        endcase
+    end
+
+    // moore outputs
+    always_comb begin
+        send_data = 0;
+        case (mem_read_state)
+            READ_START: begin
+                send_data = 0;
+            end
+            READ_WAIT: begin
+                send_data = 0;
+            end
+            READ: begin
+                send_data = 1;
+            end
+        endcase
+    end
+
+    assign led = {data_from_uart[4:0], mem_read_state[2:0]};
+
+
 
 
     // // state machine for writing to memory

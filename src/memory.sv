@@ -1,8 +1,6 @@
 `default_nettype nones
 
 
-//`define LOAD_FROM_FILE 1  // define to load memory from a file (SIMULATION ONLY)
-
 module memory (
     input  logic clk,
     input  logic rst,
@@ -45,8 +43,7 @@ module memory (
         end
     end
 
-    // Conditional block for loading memory from a file
-`ifdef LOAD_FROM_FILE
+    
     initial begin
         $readmemh("./test_vals.hex", memory_array); // dummy file, will be changed on script run
     end
@@ -57,7 +54,6 @@ module memory (
             $writememh("./test_vals.hex", memory_array);
         end
     end
-`endif
 
 endmodule
 

@@ -10,7 +10,9 @@ module uart_iface #(
     input logic send,
 
     output logic ftdi_rxd,
-    input logic ftdi_txd
+    input logic ftdi_txd, 
+
+    output logic uart_tx_done
 );
 
     logic uart_ready, uart_valid;
@@ -21,6 +23,7 @@ module uart_iface #(
         if (send && state == 0) begin
             state <= 1;
             buf_latch <= data;
+            uart_tx_done <= 0;
         end
 
         uart_valid <= 0;
@@ -32,18 +35,19 @@ module uart_iface #(
 
         if (state == 7 && uart_ready && ~uart_valid) begin
             state <= 0;
+            uart_tx_done <= 1;
         end
     end
 
     logic [7:0] uart_data;
     always_comb begin
         uart_data = 8'h00;
-        if (state == 2) uart_data = 8'h55;
-        if (state == 3) uart_data = buf_latch[7:0];
-        if (state == 4) uart_data = buf_latch[15:8];
-        if (state == 5) uart_data = buf_latch[23:16];
-        if (state == 6) uart_data = buf_latch[31:24];
-        if (state == 7) uart_data = 8'hAA;
+        if (state == 2) uart_data = 8'hF5;
+        if (state == 3) uart_data = buf_latch[31:24];
+        if (state == 4) uart_data = buf_latch[23:16];
+        if (state == 5) uart_data = buf_latch[15:8];
+        if (state == 6) uart_data = buf_latch[7:0];
+        if (state == 7) uart_data = 8'hFA;
     end
 
     uart_tx #(
