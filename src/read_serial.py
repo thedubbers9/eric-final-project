@@ -123,7 +123,7 @@ while True:
 
 
     # Write data periodically
-    if time.time() - last_write_time > write_interval:
+    if time.time() - last_write_time > write_interval and count < 3:
         # Example data to send: [START_BYTE, 0x01, 0x02, 0x03, 0x04, STOP_BYTE]
         example_data = "010101010101"
         if count %2 == 1:
@@ -133,8 +133,8 @@ while True:
         count+=1
 
         if count == 3:
-            write_data([START_BYTE, 0xF6, 0xF6, 0xF6, 0xF6, STOP_BYTE])
+            write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
         else:
-            write_mem_addr(500, example_data)
+            write_mem_addr(1000, example_data)
         
         last_write_time = time.time()
