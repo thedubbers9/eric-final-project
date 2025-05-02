@@ -96,6 +96,27 @@ def get_data_from_serial(b):
     return addr, word
 
 
+instructions = []
+addr = 0
+## open up a file to read lines from 
+with open("./add_test.hex", "r") as f:
+    for line in f.readlines():
+        line = line.strip()
+        if len(line) == 0:
+            continue
+
+        # convert the hex string to a binary string of length 12
+        word = bin(int(line, 16))[2:].zfill(12)
+        print(f"Writing to address {addr}: {word}")
+        time.sleep(0.1)
+        write_mem_addr(addr, word)
+        addr += 1
+
+time.sleep(5)
+
+## send command to read data back from memory. 
+write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
+
 
 
 while True:
@@ -123,18 +144,18 @@ while True:
 
 
     # Write data periodically
-    if time.time() - last_write_time > write_interval and count < 3:
-        # Example data to send: [START_BYTE, 0x01, 0x02, 0x03, 0x04, STOP_BYTE]
-        example_data = "010101010101"
-        if count %2 == 1:
-            example_data = "101010101010"
-            #write_data([START_BYTE, 0x32, 0x23, 0x32, 0x23, STOP_BYTE])
-            #write_data([START_BYTE, 0x33, 0x22, 0x33, 0x22, STOP_BYTE])
-        count+=1
+    # if time.time() - last_write_time > write_interval and count < 3:
+    #     # Example data to send: [START_BYTE, 0x01, 0x02, 0x03, 0x04, STOP_BYTE]
+    #     example_data = "010101010101"
+    #     if count %2 == 1:
+    #         example_data = "101010101010"
+    #         #write_data([START_BYTE, 0x32, 0x23, 0x32, 0x23, STOP_BYTE])
+    #         #write_data([START_BYTE, 0x33, 0x22, 0x33, 0x22, STOP_BYTE])
+    #     count+=1
 
-        if count == 3:
-            write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
-        else:
-            write_mem_addr(1000, example_data)
+    #     if count == 3:
+    #         write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
+    #     else:
+    #         write_mem_addr(1000, example_data)
         
-        last_write_time = time.time()
+    #     last_write_time = time.time()
