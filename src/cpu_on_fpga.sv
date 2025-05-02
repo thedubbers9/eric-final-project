@@ -90,13 +90,16 @@ module cpu_on_fpga (
     // Flop the rx data output
     logic [7:0] byte0, byte1, byte2, byte3;
     logic [1:0] byte_num;
+    logic data_valid;
 
     always @ (posedge clk_ext) begin
         if (rx_valid) begin
             if (rx_data == START_BYTE) begin
                 byte_num <= 0;
+                data_valid <= 0;
             end else if (rx_data == STOP_BYTE) begin
                 byte_num <= 0;
+                data_valid <= 1;
             end else begin
                 case (byte_num)
                     0: byte0 <= rx_data;
@@ -111,7 +114,7 @@ module cpu_on_fpga (
 
 
     // Display the error counter on the LEDs
-    assign led = byte0;
+    assign led = byte1;
 
     // // Flop the rx data output
     // logic [7:0] byte0, byte1, byte2, byte3;
