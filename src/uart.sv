@@ -1,6 +1,6 @@
 `default_nettype none
 
-
+// this code was origninally from an earlier exercise in 18-624.
 module uart_iface #(
     parameter CLK_FREQ = 25000000,
     parameter BAUD = 115200
