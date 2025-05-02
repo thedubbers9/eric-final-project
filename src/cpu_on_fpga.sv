@@ -108,19 +108,29 @@ module cpu_on_fpga (
     // Flop the rx data output
     logic [7:0] byte0, byte1, byte2, byte3;
     logic [1:0] byte_num;
-    logic load_mem_from_uart;
+    logic load_mem_from_uart; // controls the memory bus
+    logic set_uart_data_avail_flag; // indicates that new data is available from the UART. Only high for one clock cycle.
     logic dump_mem_to_uart;
 
-    always @ (posedge clk_ext) begin
-        if (rx_valid) begin
+    always @ (posedge clk_ext, posedge ext_rst) begin
+        if (ext_rst) begin
+            byte_num <= 0;
+            set_uart_data_avail_flag <= 0;
+            dump_mem_to_uart <= 0;
+            byte0 <= 0;
+            byte1 <= 0;
+            byte2 <= 0;
+            byte3 <= 0;
+        end
+        else if (rx_valid) begin
             if (rx_data == START_BYTE) begin
                 byte_num <= 0;
-                load_mem_from_uart <= 0;
+                set_uart_data_avail_flag <= 0;
             end else if (rx_data == STOP_BYTE) begin
                 byte_num <= 0;
-                load_mem_from_uart <= 1;
+                set_uart_data_avail_flag <= 1;
             end else if (rx_data == dump_mem_to_uart_BYTE) begin
-                load_mem_from_uart <= 0;
+                set_uart_data_avail_flag <= 0;
                 dump_mem_to_uart <= 1;
             end else begin
                 case (byte_num)
@@ -131,59 +141,12 @@ module cpu_on_fpga (
                 endcase
                 byte_num <= byte_num + 1;
                 dump_mem_to_uart <= 0;
+                set_uart_data_avail_flag <= 0;
             end
+        end else begin
+            set_uart_data_avail_flag <= 0;
         end
     end
-
-    // state machine for reading from UART //////////////////////////////////////////
-    // logic [1:0] uart_read_state;
-    // localparam [1:0] UART_START = 2'b00; // start here on reset/ wait for start byte
-    // localparam [1:0] UART_READ = 2'b10; // save uart val
-    // localparam [1:0] UART_STOP = 2'b11; // dump memory to UART
-
-    // // next state logic
-    // always_ff @(posedge clk_ext) begin
-    //     case (uart_read_state)
-    //         UART_START: begin
-    //             if (rx_valid) begin
-    //                 if (rx_data == START_BYTE) begin
-    //                     uart_read_state <= UART_READ;
-    //                     byte_num <= 0;
-    //                     load_mem_from_uart <= 0; // reset the load memory flag.
-    //                     dump_mem_to_uart <= 0; // reset the dump memory flag.
-    //                 end
-    //             end
-    //         end
-    //         UART_READ: begin
-    //             if (rx_valid) begin
-    //                 if (rx_data == dump_mem_to_uart_BYTE) begin
-    //                     dump_mem_to_uart <= 1; // set the dump memory flag.
-    //                     uart_read_state <= UART_STOP; // go to stop state.
-    //                 end
-
-    //                 case (byte_num)
-    //                     0: byte0 <= rx_data;
-    //                     1: byte1 <= rx_data;
-    //                     2: byte2 <= rx_data;
-    //                     3: byte3 <= rx_data;
-    //                 endcase
-
-    //                 if (byte_num == 2'b11) begin // last byte received, go to wait state.
-    //                     uart_read_state <= UART_START;
-    //                     load_mem_from_uart <= 1; // set the load memory flag.
-    //                 end else begin // increment the byte number and stay in read state.
-    //                     byte_num <= byte_num + 1;
-    //                 end
-
-    //             end 
-    //         end
-
-    //         /// UART_STOP is a terminal state, so we don't need to do anything here.
-    //         // UART_STOP: begin
-    //         //     uart_read_state <= UART_START; // go back to start state.
-    //         // end 
-    //     endcase
-    // end
 
 
     logic [9:0] address_from_uart;
@@ -256,10 +219,21 @@ module cpu_on_fpga (
 
     /////////////////////////////////////////////////////////////////////////////////////////
 
-    
 
+    // new uart data available flag. This is set when the UART has new data to send to the memory.
+    logic new_uart_data_avail_flag;
 
-
+    always_ff @(posedge clk_ext, posedge ext_rst) begin
+        if (ext_rst) begin
+            new_uart_data_avail_flag <= 0;
+        end else begin
+            if (set_uart_data_avail_flag) begin
+                new_uart_data_avail_flag <= 1'b1;
+            end else if (clear_data_avail_flag) begin
+                new_uart_data_avail_flag <= 1'b0;
+            end
+        end
+    end
 
     // state machine for writing to memory //////////////////////////
     logic [2:0] mem_write_state;
@@ -268,13 +242,17 @@ module cpu_on_fpga (
     localparam [2:0] SEND_DATA_L = 3'b010;
     localparam [2:0] SEND_ADDR_U = 3'b011;
     localparam [2:0] SEND_DATA_U = 3'b100;
+
+    logic clear_data_avail_flag;
     
 
     // Next state logic 
     always_ff @(posedge clk_ext, posedge ext_rst) begin
         if (ext_rst) begin
             mem_write_state <= WAIT;
+            load_mem_from_uart <= 0;
         end else begin
+            clear_data_avail_flag <= 1'b0;
             case (mem_write_state)
                 SEND_ADDR_L: begin
                     mem_write_state <= SEND_DATA_L;
@@ -289,9 +267,13 @@ module cpu_on_fpga (
                     mem_write_state <= WAIT;
                 end
                 WAIT: begin
-                    if (load_mem_from_uart) begin
+                    if (new_uart_data_avail_flag) begin
+                        load_mem_from_uart <= 1;
                         mem_write_state <= SEND_ADDR_L;
-                    end 
+                        clear_data_avail_flag <= 1'b1;
+                    end else begin
+                        load_mem_from_uart <= 0;
+                    end
                 end
             endcase
         end
