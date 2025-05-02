@@ -112,14 +112,17 @@ with open("./add_test.hex", "r") as f:
         write_mem_addr(addr, word)
         addr += 1
 
-time.sleep(5)
+time.sleep(8)
 
 ## send command to read data back from memory. 
 write_data([0xF6, 0xF6, 0xF6, 0xF6, 0xF6, 0xF6])
 
+result_mem = {}
 
+done = False
+start_time = time.time()
+while not done and time.time() - start_time < 30:
 
-while True:
     # Read data
     buf += ser.read(100)
 
@@ -141,6 +144,23 @@ while True:
         addr, word = get_data_from_serial(b)
         if addr is not None and word is not None:
             print(f"Address: {addr}, Word: {word:012b}")
+            result_mem[addr] = word
+            if addr == 1023:
+                done = True
+                break
+
+
+## write the data to a file
+with open("read_test.hex", "w") as f:
+    for addr in range(1024):
+        if addr in result_mem:
+            f.write(f"{result_mem[addr]:03X}\n")
+        else:
+            f.write("000\n")
+
+        
+
+        
 
 
     # Write data periodically
